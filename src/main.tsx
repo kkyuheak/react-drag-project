@@ -33,7 +33,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
-  background-color: ${(props) => props.theme.bgColor};
+  background: linear-gradient(135deg, #e09, #d0e)
 }
 ol, ul {
 	list-style: none;

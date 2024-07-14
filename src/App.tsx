@@ -1,74 +1,65 @@
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "./atom";
-import Board from "./Components/Board";
+import { Variants, motion } from "framer-motion";
 
 const Wrapper = styled.div`
-  max-width: 680px;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  height: 100vh;
 `;
 
-const Boards = styled.div`
+const Box = styled(motion.div)`
+  width: 200px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  width: 100%;
+  grid-template-columns: repeat(2, 1fr);
 `;
 
+const Circle = styled(motion.div)`
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+  background-color: #fff;
+  height: 70px;
+  width: 70px;
+  place-self: center;
+  border-radius: 50%;
+`;
+
+const boxVars: Variants = {
+  start: { scale: 0.5, opacity: 0 },
+  end: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      duration: 0.5,
+      bounce: 0.5,
+      // delayChildren: 0.5,
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const circleVars = {
+  start: { opacity: 0, y: 10 },
+  end: {
+    opacity: 1,
+    y: 0,
+  },
+};
 const App = () => {
-  const [toDos, setTodos] = useRecoilState(toDoState);
-  const handleOnDrag = (info: DropResult) => {
-    console.log(info);
-    const { destination, source, draggableId } = info;
-    if (!destination) return;
-    if (source.droppableId === destination?.droppableId) {
-      setTodos((allBoards) => {
-        const copyBoard = [...allBoards[source.droppableId]];
-        copyBoard.splice(source.index, 1);
-        copyBoard.splice(destination.index, 0, draggableId);
-        return {
-          ...allBoards,
-          [source.droppableId]: copyBoard,
-        };
-      });
-    }
-    if (source.droppableId !== destination?.droppableId) {
-      setTodos((cur) => {
-        // 현재 위치
-        const now = source.droppableId;
-        // 변경된 위치
-        const final = destination.droppableId;
-
-        const copyNowCur = [...cur[now]];
-        copyNowCur.splice(source.index, 1);
-
-        const copyFinalCur = [...cur[final]];
-        copyFinalCur.splice(destination.index, 0, draggableId);
-
-        return {
-          ...cur,
-          [now]: copyNowCur,
-          [final]: copyFinalCur,
-        };
-      });
-    }
-  };
   return (
-    <DragDropContext onDragEnd={handleOnDrag}>
-      <Wrapper>
-        <Boards>
-          {Object.keys(toDos).map((boardId) => (
-            <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
-          ))}
-        </Boards>
-      </Wrapper>
-    </DragDropContext>
+    <Wrapper>
+      <Box variants={boxVars} initial="start" animate="end">
+        <Circle variants={circleVars} />
+        <Circle variants={circleVars} />
+        <Circle variants={circleVars} />
+        <Circle variants={circleVars} />
+      </Box>
+    </Wrapper>
   );
 };
 
