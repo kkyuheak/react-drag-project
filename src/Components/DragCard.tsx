@@ -9,21 +9,22 @@ const Card = styled.div`
   margin-bottom: 5px;
 `;
 interface IDragCard {
-  todo: string;
+  todoText: string;
+  todoId: number;
   i: number;
 }
 
-const DragCard = ({ todo, i }: IDragCard) => {
+const DragCard = ({ todoId, todoText, i }: IDragCard) => {
   console.log("rerender");
   return (
-    <Draggable key={todo} draggableId={todo} index={i}>
+    <Draggable draggableId={todoId + ""} index={i}>
       {(provided) => (
         <Card
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {todo}
+          {todoText}
         </Card>
       )}
     </Draggable>
